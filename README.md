@@ -40,7 +40,6 @@ ConnecTag comes with everything you need to get started:
       - iCrossing's Interest2Action
       - Google Analytics\*
       - Omniture\*
-      - Woopra\*
 
 \*Note: Any trademarks or copyrights are the property of their respective owners
 
