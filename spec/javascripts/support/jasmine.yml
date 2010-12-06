@@ -1,0 +1,9 @@
+src_dir: lib
+src_files:
+  - connectag/connectag.js
+spec_dir: spec
+spec_files:
+  - **/*_spec.js
+stylesheets:
+helpers:
+  - **/*_helper.js

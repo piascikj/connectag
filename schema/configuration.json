@@ -1,0 +1,62 @@
+{
+    "type": "object",
+    "properties": {
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "plugin": {
+                        "type": "object",
+                        "properties": {
+                            "id":       { "type": "string" },
+                            "path":     { "type": "string" },
+                        }
+                    },
+                    "settings": {
+                        "optional": true,
+                        "type": "object"
+                    },
+                    "instances": {
+                        "type": "array",
+                        "items": {
+                            "match": {
+                                "id": "match",
+                                "type": {
+                                    "type": "object",
+                                    "properties": {
+                                        "host":     { "optional": true, "type": ["string", { "type": "array", "items": { "type": "string" } }] },
+                                        "hostname": { "optional": true, "type": ["string", { "type": "array", "items": { "type": "string" } }] },
+                                        "href":     { "optional": true, "type": ["string", { "type": "array", "items": { "type": "string" } }] },
+                                        "location": { "optional": true, "type": ["string", { "type": "array", "items": { "type": "string" } }] },
+                                        "pathname": { "optional": true, "type": ["string", { "type": "array", "items": { "type": "string" } }] },
+                                        "search":   { "optional": true, "type": ["string", { "type": "array", "items": { "type": "string" } }] },
+                                        "protocol": { "optional": true, "type": ["string", { "type": "array", "items": { "type": "string" } }] },
+                                        "port":     { "optional": true, "type": ["string", "number", { "type": "array", "items": { "type": ["string", "number"] } }] },
+                                        "hash":     { "optional": true, "type": ["string", "number", { "type": "array", "items": { "type": ["string", "number"] } }] },
+                                        "event":    { "optional": true, "type": ["string", "number", { "type": "array", "items": { "type": ["string", "number"] } }] }
+                                        "pageId":   { "optional": true, "type": ["string", "number", { "type": "array", "items": { "type": ["string", "number"] } }] }
+                                    }
+                                }
+                            },
+                            "commands": {
+                                "type": "array",
+                                "items": {
+                                    "id": "command",
+                                    "type": "object",
+                                    "properties": {
+                                        "id":           { "type": ["string", "number"] },
+                                        "method":       { "type": "string" },
+                                        "paramaters":   { "type": "array" },
+                                        "enabled":      { "optional": true, "type": "boolean" }
+                                    },
+                                    "additionalProperties": false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
