@@ -9,14 +9,11 @@
                     "plugin": {
                         "type": "object",
                         "properties": {
-                            "id":       { "type": "string" },
-                            "path":     { "type": "string" },
+                            "id":   {"type": "string"},
+                            "path": {"type": "string"},
                         }
                     },
-                    "settings": {
-                        "optional": true,
-                        "type": "object"
-                    },
+                    "settings": {"optional": true, "type": "object"},
                     "instances": {
                         "type": "array",
                         "items": {
@@ -25,17 +22,17 @@
                                 "type": {
                                     "type": "object",
                                     "properties": {
-                                        "host":     { "optional": true, "type": ["string", { "type": "array", "items": { "type": "string" } }] },
-                                        "hostname": { "optional": true, "type": ["string", { "type": "array", "items": { "type": "string" } }] },
-                                        "href":     { "optional": true, "type": ["string", { "type": "array", "items": { "type": "string" } }] },
-                                        "location": { "optional": true, "type": ["string", { "type": "array", "items": { "type": "string" } }] },
-                                        "pathname": { "optional": true, "type": ["string", { "type": "array", "items": { "type": "string" } }] },
-                                        "search":   { "optional": true, "type": ["string", { "type": "array", "items": { "type": "string" } }] },
-                                        "protocol": { "optional": true, "type": ["string", { "type": "array", "items": { "type": "string" } }] },
-                                        "port":     { "optional": true, "type": ["string", "number", { "type": "array", "items": { "type": ["string", "number"] } }] },
-                                        "hash":     { "optional": true, "type": ["string", "number", { "type": "array", "items": { "type": ["string", "number"] } }] },
-                                        "event":    { "optional": true, "type": ["string", "number", { "type": "array", "items": { "type": ["string", "number"] } }] }
-                                        "pageId":   { "optional": true, "type": ["string", "number", { "type": "array", "items": { "type": ["string", "number"] } }] }
+                                        "host":     {"optional": true, "type": ["string", {"type": "array", "items": {"type": "string"}}]},
+                                        "hostname": {"optional": true, "type": ["string", {"type": "array", "items": {"type": "string"}}]},
+                                        "href":     {"optional": true, "type": ["string", {"type": "array", "items": {"type": "string"}}]},
+                                        "location": {"optional": true, "type": ["string", {"type": "array", "items": {"type": "string"}}]},
+                                        "pathname": {"optional": true, "type": ["string", {"type": "array", "items": {"type": "string"}}]},
+                                        "search":   {"optional": true, "type": ["string", {"type": "array", "items": {"type": "string"}}]},
+                                        "protocol": {"optional": true, "type": ["string", {"type": "array", "items": {"type": "string"}}]},
+                                        "port":     {"optional": true, "type": ["string", "number", {"type": "array", "items": {"type": ["string", "number"]}}]},
+                                        "hash":     {"optional": true, "type": ["string", "number", {"type": "array", "items": {"type": ["string", "number"]}}]},
+                                        "event":    {"optional": true, "type": ["string", "number", {"type": "array", "items": {"type": ["string", "number"]}}]}
+                                        "pageId":   {"optional": true, "type": ["string", "number", {"type": "array", "items": {"type": ["string", "number"]}}]}
                                     }
                                 }
                             },
@@ -45,10 +42,10 @@
                                     "id": "command",
                                     "type": "object",
                                     "properties": {
-                                        "id":           { "type": ["string", "number"] },
-                                        "method":       { "type": "string" },
-                                        "paramaters":   { "type": "array" },
-                                        "enabled":      { "optional": true, "type": "boolean" }
+                                        "id":         {"type": ["string", "number"]},
+                                        "method":     {"type": "string"},
+                                        "paramaters": {"type": "array"},
+                                        "enabled":    {"optional": true, "type": "boolean"}
                                     },
                                     "additionalProperties": false
                                 }
