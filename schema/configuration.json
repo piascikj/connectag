@@ -10,7 +10,7 @@
                         "type": "object",
                         "properties": {
                             "id":   {"type": "string"},
-                            "path": {"type": "string"},
+                            "path": {"type": "string"}
                         }
                     },
                     "settings": {"optional": true, "type": "object"},
@@ -31,7 +31,7 @@
                                         "protocol": {"optional": true, "type": ["string", {"type": "array", "items": {"type": "string"}}]},
                                         "port":     {"optional": true, "type": ["string", "number", {"type": "array", "items": {"type": ["string", "number"]}}]},
                                         "hash":     {"optional": true, "type": ["string", "number", {"type": "array", "items": {"type": ["string", "number"]}}]},
-                                        "event":    {"optional": true, "type": ["string", "number", {"type": "array", "items": {"type": ["string", "number"]}}]}
+                                        "event":    {"optional": true, "type": ["string", "number", {"type": "array", "items": {"type": ["string", "number"]}}]},
                                         "pageId":   {"optional": true, "type": ["string", "number", {"type": "array", "items": {"type": ["string", "number"]}}]}
                                     }
                                 }
