@@ -22,6 +22,28 @@ describe("ConnecTag", function () {
             });
         });
 
+        describe("ConnecTag.util.toRegExp", function () {
+            it("should return a RegExp given a valid regex string", function () {
+                var regexString = "^hello$";
+
+                expect(ConnecTag.util.toRegExp(regexString).toString()).toEqual('/' + regexString + '/');
+            });
+
+            it("should return a RegExp given an array of valid regex strings", function () {
+                var regexArray = ["^hello$", "yo$"],
+                expected = '/' + regexArray.join('|') + '/';
+
+                expect(ConnecTag.util.toRegExp(regexArray).toString()).toEqual(expected);
+            });
+
+            it("should return an always fail RegExp given an invalid regex string", function () {
+                var regexString = "^((",
+                expected = '/$.+^/';
+
+                expect(ConnecTag.util.toRegExp(regexString).toString()).toEqual(expected);
+            });
+        });
+
         describe("ConnecTag.util.isNull", function () {
             it("should identify null", function () {
                 for (var type in types) {
