@@ -34,9 +34,7 @@ What's in the Box?
 ConnecTag comes with everything you need to get started:
 
    - The ConnecTag container tag
-   - A sample configuration file
-   - A sample plugin file
-   - Four vendor plugins:
+   - Three vendor plugins:
       - iCrossing's Interest2Action
       - Google Analytics\*
       - Omniture\*
