@@ -1,7 +1,7 @@
 ConnecTag
 =============
 
-Copyright (c) 2010 iCrossing, Inc
+Copyright 2010 iCrossing, Inc
 ConnecTag is released under the LGPL license, see COPYING and COPYING.LESSER for full details.
 
 Overview
