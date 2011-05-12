@@ -1,4 +1,79 @@
 describe("ConnecTag", function () {
+    beforeEach(function () {
+        spyOn(ConnecTag.helpers, "getXMLHttpRequest").andCallFake(function () {
+            var xhr;
+            
+            xhr = {
+                readyState: 4,
+                status: 200,
+                open: function () {},
+                send: function () {
+                    xhr.onreadystatechange();
+                }
+            };
+
+            return xhr;
+        });
+    });
+
+    describe("ConnecTag.connect", function () {
+        it("should call initialize with the params and set track as the callback", function () {
+            var params = {};
+
+            spyOn(ConnecTag, "initialize");
+
+            ConnecTag.connect(params);
+
+            expect(params.callback).toBe(ConnecTag.track);
+            expect(ConnecTag.initialize).toHaveBeenCalledWith(params);
+        });
+    });
+
+    describe("ConnecTag.initialize", function () {
+        it("should override document.write by default", function () {
+            ConnecTag.initialize({
+                preloadPlugins: false
+            });
+
+            expect(document.write).toBe(ConnecTag.helpers.documentWrite);
+        });
+
+        it("should not override document.write when replaceDocWrite is false", function () {
+            var docWrite;
+
+            docWrite = document.write;
+
+            ConnecTag.initialize({
+                preloadPlugins: false,
+                replaceDocWrite: false
+            });
+
+            expect(document.write).toBe(docWrite);
+        });
+
+        it("should call getScript when given script and store the result as ConnecTag.data", function () {
+            
+        });
+
+        it("should call getJson when given json and store the result as ConnecTag.data", function () {
+            var data, params;
+
+            data = {};
+            params = {
+                json: "/some/path/to.json",
+                preloadPlugins: false
+            };
+
+            // Ignoring responseText for purposes of this test and return data from above
+            spyOn(ConnecTag.helpers, "parseJson").andCallFake(function (responseText) { return data; });
+            spyOn(ConnecTag.helpers, "getJson").andCallFake(function (url, callback) { callback(data); });
+
+            ConnecTag.initialize(params);
+
+            expect(ConnecTag.helpers.getJson).toHaveBeenCalled();
+            expect(ConnecTag.data).toBe(data);
+        });
+    });
 
     describe("ConnecTag.util", function () {
         var types = {
