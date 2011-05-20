@@ -1,23 +1,9 @@
 describe("ConnecTag", function () {
-    beforeEach(function () {
-        spyOn(ConnecTag.helpers, "getXMLHttpRequest").andCallFake(function () {
-            var xhr;
-            
-            xhr = {
-                readyState: 4,
-                status: 200,
-                open: function () {},
-                send: function () {
-                    xhr.onreadystatechange();
-                }
-            };
-
-            return xhr;
-        });
+    describe("ConnecTag.track", function () {
     });
 
     describe("ConnecTag.connect", function () {
-        it("should call initialize with the params and set track as the callback", function () {
+        it("should call initialize with params and set track as callback", function () {
             var params = {};
 
             spyOn(ConnecTag, "initialize");
@@ -51,11 +37,11 @@ describe("ConnecTag", function () {
             expect(document.write).toBe(docWrite);
         });
 
-        it("should call getScript when given script and store the result as ConnecTag.data", function () {
+        it("should call getScript if given script and store the result", function () {
             
         });
 
-        it("should call getJson when given json and store the result as ConnecTag.data", function () {
+        it("should call getJson if given json and store the result", function () {
             var data, params;
 
             data = {};
@@ -72,6 +58,92 @@ describe("ConnecTag", function () {
 
             expect(ConnecTag.helpers.getJson).toHaveBeenCalled();
             expect(ConnecTag.data).toBe(data);
+        });
+    });
+
+    describe("ConnecTag.helpers", function () {
+        describe("ConnecTag.helpers.getJson", function () {
+            it("should call getScript if url is jsonp", function () {
+                var url;
+
+                url = "http://xdomain/people.json?jsonp=?";
+                spyOn(ConnecTag.helpers, "getScript");
+
+                ConnecTag.helpers.getJson(url, function () {});
+
+                // TODO Need better way to make sure getScript got the right URL
+                expect(ConnecTag.helpers.getScript).toHaveBeenCalled();
+            });
+
+            it("should make an ajax request for json and pass parsed result to the callback", function () {
+                var params, data, request;
+
+                request = {
+                    readyState: 4,
+                    status: 200,
+                    open: function () {},
+                    send: function () {
+                        this.onreadystatechange();
+                    }
+                };
+                data = {};
+                params = {
+                    url: "http://domain/people.json",
+                    callback: function () {}
+                };
+
+                spyOn(ConnecTag.helpers, "getXMLHttpRequest").andReturn(request);
+                spyOn(request, "open").andCallThrough();
+                spyOn(params, "callback").andCallThrough();
+                spyOn(ConnecTag.helpers, "parseJson").andCallFake(function () {
+                    return data;
+                });
+
+                ConnecTag.helpers.getJson(params.url, params.callback);
+
+                expect(ConnecTag.helpers.getXMLHttpRequest).toHaveBeenCalled();
+                expect(request.open).toHaveBeenCalledWith("GET", params.url, true);
+                expect(params.callback).toHaveBeenCalledWith(data);
+            });
+        });
+
+        describe("ConnecTag.helpers.getScript", function () {
+        });
+
+        describe("ConnecTag.helpers.parseJson", function () {
+            it("should use JSON.parse if it exists", function () {
+                var json;
+
+                json = "{}";
+                window.JSON = window.JSON || {parse: function () {}};
+
+                spyOn(window.JSON, "parse");
+
+                ConnecTag.helpers.parseJson(json);
+
+                expect(window.JSON.parse).toHaveBeenCalledWith(json);
+            });
+
+            it("should use eval if JSON.parse is not available and JSON is valid", function () {
+                var json, _JSON;
+
+                json = "{}";
+                _JSON = window.JSON;
+                window.JSON = null;
+
+                spyOn(window, "eval");
+
+                ConnecTag.helpers.parseJson(json);
+
+                expect(window.eval).toHaveBeenCalledWith("(" + json + ")");
+                window.JSON = _JSON;
+            });
+        });
+
+        describe("ConnecTag.helpers.parseTemplate", function () {
+        });
+
+        describe("ConnecTag.helpers.getXMLHttpRequest", function () {
         });
     });
 
@@ -427,7 +499,9 @@ describe("ConnecTag", function () {
     describe("ConnecTag.connect", function () {
         it("should call initialize with given parameters, and set up track() as the callback", function () {
             var params = {
-                data: { tags: [] },
+                data: {
+                    tags: []
+                },
                 preloadPlugins: false
             };
 
