@@ -9,9 +9,9 @@ Overview
 
 ConnecTag is an open source software project dedicated to creating a fully customer-deployable tracking tag container solution, enabling simplified management and trivial enabling/disabling of multiple tracking tags. ConnecTag was developed to overcome some of the current challenges associated with pixeling web sites:
 
-- The (sometimes frequent) need to add and/or remove tags from a page, pages, or an entire site
+- The frequent need to add and/or remove tags from a page, pages, or an entire site
 - A method for sharing a unique key across multiple tracking solutions (i.e. attribution)
-- Reliance on third-party services
+- Reliance on hosted third-party container services
 - Empowering the department responsible for the management, performance, and security of your web site (typically IT, but could be your overworked webmaster, too)
 
 Elevator Pitch
@@ -69,7 +69,7 @@ What It Doesn't Do
 
 - ConnecTag is not a hosted service. ConnecTag must be incorporated into and hosted on your web site
 - ConnecTag is not, by itself, a tracking or analytics solution. It is only a container tag that enables you to manage the services of other providers
-- ConnecTag is open source software, so there are no guarantees; use at your own risk
+- ConnecTag is open source software and there are no guarantees; use at your own risk
 
 Any Drawbacks?
 --------------
@@ -92,7 +92,7 @@ Contributing
 
 We encourage you to download, modify, and contribute back to ConnecTag\! What do we need your help with?
 
+- Adding new vendor plugins
+- Adding additional matchers that have may a common use case
 - Optimizing the helper functions
 - Optimizing/improving existing vendor plugins
-- Adding additional matchers that have may a common use case
-- Adding new vendor plugins
