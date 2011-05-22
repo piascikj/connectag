@@ -65,6 +65,16 @@ describe("ConnecTag.util", function () {
     });
 
     describe("ConnecTag.util.isArray", function () {
+        it("should delegate to Array.isArray if present", function () {
+            Array.isArray = Array.isArray || function () {};
+
+            spyOn(Array, 'isArray');
+
+            ConnecTag.util.isArray([]);
+
+            expect(Array.isArray).toHaveBeenCalled();
+        });
+
         it("should identify an array", function () {
             var type;
 
