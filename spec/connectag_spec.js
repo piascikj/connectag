@@ -1,43 +1,117 @@
 describe("ConnecTag.track", function () {
-    var plugin;
+    var plugin1, plugin2, data;
 
     beforeEach(function () {
-        plugin = new ConnecTag.Plugin({
-            id: "plugin",
-            track: jasmine.createSpy()
-        });
-
-        ConnecTag.data = {
+        data = {
             tags: [
                 {
-                    plugin: {
-                        id: "plugin"
-                    },
+                    plugin: {id: "plugin1", path: ""},
                     settings: {},
                     instances: [
                         {
-                            match: {
-                                pageId: "1"
-                            },
-                            commands: [
-                                {method: "a_method", parameters: []}
+                            match: {pageId: "^100$"},
+                            commands: [{method: "hello", parameters: []}],
+                            instances: [
+                                {
+                                    match: {pageId: "^200$"},
+                                    commands: [{method: "whllkjsdf", parameters: ["LKJL"]}]
+                                },
+                                {
+                                    match: {pageId: "^100$"},
+                                    commands: [{method: "hi", parameters: ["Hello"]}]
+                                }
                             ]
+                        },
+                        {
+                            match: {pageId: "^200$"},
+                            commands: [{id: "A", method: "whatever", parameters: []}],
+                            instances: [
+                                {
+                                    match: {pageId: "^200$"},
+                                    commands: {
+                                        disable: ['A'],
+                                        enable: ['A'],
+                                        before: {
+                                            "A": [
+                                                {method: 'whoa!', parameters: []}
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    plugin: {id: "plugin2", path: ""},
+                    settings: {},
+                    instances: [
+                        {
+                            match: {pageId: "^BLAH$"},
+                            commands: [{method: "hello", parameters: []}],
                         }
                     ]
                 }
             ]
         };
 
-        ConnecTag.plugins["plugin"] = plugin;
+        plugin1 = new ConnecTag.Plugin({id: "plugin1", track: function () {}});
+        plugin2 = new ConnecTag.Plugin({id: "plugin2", track: function () {}});
+
+        ConnecTag.plugins['plugin1'] = plugin1;
+        ConnecTag.plugins['plugin2'] = plugin2;
+        ConnecTag.data = data;
     });
 
-    it("should call a plugin's track method if there is a match", function () {
-        ConnecTag.values.pageId = "1";
+    it("should call track for each matching plugin", function () {
+        ConnecTag.values.pageId = "100";
+        spyOn(ConnecTag.matchers, 'pageId').andCallThrough();
+        spyOn(ConnecTag.plugins.plugin1, 'track');
+        spyOn(ConnecTag.plugins.plugin2, 'track');
 
         ConnecTag.track('pageId');
 
-        // TODO Make this better!!
-        expect(plugin.track).toHaveBeenCalled();
+        expect(ConnecTag.matchers.pageId).toHaveBeenCalled();
+        expect(ConnecTag.plugins.plugin1.track).toHaveBeenCalled();
+        expect(ConnecTag.plugins.plugin2.track).not.toHaveBeenCalled();
+    });
+
+    it("should match against multiple arguments if given", function () {
+        spyOn(ConnecTag.matchers, 'pageId');
+        spyOn(ConnecTag.matchers, 'hash');
+        spyOn(ConnecTag.matchers, 'protocol');
+
+        ConnecTag.track('hash', {pageId: '1000'}, 'protocol');
+
+        expect(ConnecTag.matchers.pageId).toHaveBeenCalledWith('^100$','1000');
+        expect(ConnecTag.matchers.hash).toHaveBeenCalled();
+        expect(ConnecTag.matchers.protocol).toHaveBeenCalled();
+    });
+
+    it("should replace the root commands if nested commands are an array and has a match", function () {
+        var commands;
+
+        ConnecTag.values.pageId = "100";
+        spyOn(plugin1, 'track').andCallFake(function (settings, instances) {
+            commands = instances[0].commands;
+        });
+
+        ConnecTag.track('pageId');
+
+        expect(commands).toEqual(data.tags[0].instances[0].instances[1].commands);
+    });
+
+    it("should apply specified modifiers", function () {
+        ConnecTag.values.pageId = "200";
+        spyOn(ConnecTag.modifiers, 'disable').andCallThrough();
+        spyOn(ConnecTag.modifiers, 'enable').andCallThrough();
+        spyOn(ConnecTag.modifiers, 'before').andCallThrough();
+
+        ConnecTag.track('pageId');
+
+        expect(ConnecTag.modifiers.disable).toHaveBeenCalled();
+        expect(ConnecTag.modifiers.enable).toHaveBeenCalled();
+        expect(ConnecTag.modifiers.before).toHaveBeenCalled();
     });
 });
 
@@ -219,58 +293,5 @@ describe("ConnecTag.connect", function () {
 
         expect(ConnecTag.initialize).toHaveBeenCalledWith(params);
         expect(ConnecTag.track).toHaveBeenCalled();
-    });
-});
-
-describe("ConnecTag.track", function () {
-    var data;
-
-    data = {
-        tags: [
-            {
-                plugin: {id: "plugin1", path: "/plugin1.js"},
-                settings: {},
-                instances: [{match: {pageId: "^100$"}, commands: []}]
-            },
-            {
-                plugin: {id: "plugin2", path: "/plugin2.js"},
-                settings: {},
-                instances: [{match: {pageId: ["^0$", "^hello$"]}, commands: []}]
-            }
-        ]
-    };
-
-    it("should call plugin.track for each matching plugin", function () {
-        ConnecTag.plugins = {
-            'plugin1': { track: function () {} },
-            'plugin2': { track: function () {} }
-        };
-
-        spyOn(ConnecTag.matchers, 'pageId').andCallThrough();
-        spyOn(ConnecTag.plugins.plugin1, 'track');
-        spyOn(ConnecTag.plugins.plugin2, 'track');
-
-        ConnecTag.initialize({data: ConnecTag.util.clone(data), preloadPlugins: false, callback: function () {
-            ConnecTag.track({'pageId':'100'});
-        }});
-
-        expect(ConnecTag.matchers.pageId).toHaveBeenCalled();
-        expect(ConnecTag.plugins.plugin1.track).toHaveBeenCalled();
-        expect(ConnecTag.plugins.plugin2.track).not.toHaveBeenCalled();
-    });
-
-    it("should match against multiple arguments if given", function () {
-        spyOn(ConnecTag.matchers, 'pageId');
-        spyOn(ConnecTag.matchers, 'hash');
-        spyOn(ConnecTag.matchers, 'protocol');
-
-        ConnecTag.initialize({data: ConnecTag.util.clone(data), preloadPlugins: false, callback: function () {
-            ConnecTag.data.tags.pop();
-            ConnecTag.track('hash', {pageId: '1000'}, 'protocol');
-        }});
-
-        expect(ConnecTag.matchers.pageId).toHaveBeenCalledWith('^100$','1000');
-        expect(ConnecTag.matchers.hash).toHaveBeenCalled();
-        expect(ConnecTag.matchers.protocol).toHaveBeenCalled();
     });
 });
