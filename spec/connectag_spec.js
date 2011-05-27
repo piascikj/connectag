@@ -1,3 +1,79 @@
+describe("ConnecTag.exit/track", function () {
+    beforeEach(function () {
+        spyOn(ConnecTag, "track");
+    });
+
+    it("should return an object with a track method", function () {
+        var result;
+
+        result = ConnecTag.exit("/123");
+
+        expect(typeof result).toEqual("object");
+        expect(typeof result.track).toEqual("function");
+    });
+
+    it("should pass a callback to setTimeout with the default delay", function () {
+        var args;
+
+        args = [];
+        spyOn(window, "setTimeout");
+
+        ConnecTag.exit(null).track(args);
+
+        expect(window.setTimeout).toHaveBeenCalled();
+        expect(typeof window.setTimeout.mostRecentCall.args[0]).toEqual("function");
+        expect(window.setTimeout.mostRecentCall.args[1]).toEqual(500);
+        expect(ConnecTag.track).toHaveBeenCalledWith(args);
+    });
+
+    it("should allow override of default delay", function () {
+        var expected, result;
+
+        expected = 100;
+        spyOn(window, "setTimeout").andCallFake(function (fn, delay) { result = delay; });
+
+        ConnecTag.exit('/blah', expected).track();
+        expect(expected).toEqual(result);
+    });
+
+    describe("redirection", function () {
+        var url;
+
+        beforeEach(function () {
+            spyOn(window, "setTimeout").andCallFake(function (f) {f();});
+
+            window.location.hash = "#";
+            url = window.location.href + "#/" + new Date().getTime();
+        });
+
+        it("should set the location to the given url", function () {
+            ConnecTag.exit(url).track();
+            expect(window.location.href).toEqual(url);
+        });
+
+        it("should set the location given an anchor", function () {
+            var a;
+
+            a = document.createElement('a');
+            a.href = url;
+
+            ConnecTag.exit(a).track();
+            expect(window.location.href).toEqual(url);
+        });
+
+        it("should set the location given an event", function () {
+            var a, evt;
+
+            a = document.createElement('a');
+            a.href = url;
+            evt = {target: a};
+
+            ConnecTag.exit(evt).track();
+            expect(window.location.href).toEqual(url);
+        });
+    });
+});
+
 describe("ConnecTag.track", function () {
     var plugin1, plugin2, data;
 
@@ -55,50 +131,7 @@ describe("ConnecTag.track", function () {
             ]
         };
 
-        plugin1 = new ConnecTag.Plugin({id: "plugin1", track: function () {}});
-        plugin2 = new ConnecTag.Plugin({id: "plugin2", track: function () {}});
-
-        ConnecTag.plugins['plugin1'] = plugin1;
-        ConnecTag.plugins['plugin2'] = plugin2;
-        ConnecTag.data = data;
-    });
-
-    it("should call track for each matching plugin", function () {
-        ConnecTag.values.pageId = "100";
-        spyOn(ConnecTag.matchers, 'pageId').andCallThrough();
-        spyOn(ConnecTag.plugins.plugin1, 'track');
-        spyOn(ConnecTag.plugins.plugin2, 'track');
-
-        ConnecTag.track('pageId');
-
-        expect(ConnecTag.matchers.pageId).toHaveBeenCalled();
-        expect(ConnecTag.plugins.plugin1.track).toHaveBeenCalled();
-        expect(ConnecTag.plugins.plugin2.track).not.toHaveBeenCalled();
-    });
-
-    it("should match against multiple arguments if given", function () {
-        spyOn(ConnecTag.matchers, 'pageId');
-        spyOn(ConnecTag.matchers, 'hash');
-        spyOn(ConnecTag.matchers, 'protocol');
-
-        ConnecTag.track('hash', {pageId: '1000'}, 'protocol');
-
-        expect(ConnecTag.matchers.pageId).toHaveBeenCalledWith('^100$','1000');
-        expect(ConnecTag.matchers.hash).toHaveBeenCalled();
-        expect(ConnecTag.matchers.protocol).toHaveBeenCalled();
-    });
-
-    it("should replace the root commands if nested commands are an array and has a match", function () {
-        var commands;
-
-        ConnecTag.values.pageId = "100";
-        spyOn(plugin1, 'track').andCallFake(function (settings, instances) {
-            commands = instances[0].commands;
-        });
-
-        ConnecTag.track('pageId');
-
-        expect(commands).toEqual(data.tags[0].instances[0].instances[1].commands);
+        ConnecTag.plugins["plugin"] = plugin = new ConnecTag.Plugin({id: "plugin", track: jasmine.createSpy()});
     });
 
     it("should apply specified modifiers", function () {
@@ -117,7 +150,7 @@ describe("ConnecTag.track", function () {
 
 describe("ConnecTag.connect", function () {
     it("should call initialize with params and set track as callback", function () {
-        var params
+        var params;
 
         params = {};
 
