@@ -1,5 +1,3 @@
-global = this
-
 id = "googleAnalytics"
 
 methods = [
@@ -59,21 +57,21 @@ getMethodHandler = (m) ->
     return (args...) ->
         # Remove id, prepend to method, add method to args
         id = args.pop()
-        method = (id ? id + "." : "") + m
+        method = (if id then "#{id}." else "") + m
         args.splice(0, 0, method)
 
-        global._gaq.push(args)
+        window._gaq.push(args)
 
 plugin = new ConnecTag.Plugin {
     initialized: false
 
     initialize: (settings, callback) ->
-        url = (global.location.protocol is 'https:' ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'
+        url = (if window.location.protocol is 'https:' then 'https://ssl' else 'http://www') + '.google-analytics.com/ga.js'
         ConnecTag.helpers.getScript(url)
         @initialized = true
 
     track:  (settings, instances) ->
-        global._gaq = global._gaq || []
+        window._gaq = window._gaq || []
 
         for instance in instances
             @executeCommand {

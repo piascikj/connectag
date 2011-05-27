@@ -1,5 +1,3 @@
-global = this
-
 id = "siteCatalyst"
 
 methods =
@@ -106,28 +104,28 @@ handlers =
     calls: (method) ->
         (args...) ->
             id = args.pop()
-            global[id][method].apply(global[id], args)
+            window[id][method].apply(window[id], args)
 
     accessors: (property) ->
         (args...) ->
             id = args.pop()
 
             if args.length > 0
-                global[id][property] = args[0]
+                window[id][property] = args[0]
             else
-                global[id][property]
+                window[id][property]
 
     readers: (property) ->
         (args...) ->
             id = args.pop()
-            global[id][property]
+            window[id][property]
 
     globals: (property) ->
         (args...) ->
             if args.length > 1
-                global[property] = args[0]
+                window[property] = args[0]
             else
-                global[property]
+                window[property]
 
 instanceNames = {}
 
@@ -135,7 +133,7 @@ plugin = new ConnecTag.Plugin {
     initialized: false
 
     initialize: (settings, callback = () ->) ->
-        global.s_account = settings.s_account
+        window.s_account = settings.s_account
         ConnecTag.helpers.getScript(settings.path, callback)
 
     track: (settings, instances) ->

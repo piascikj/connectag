@@ -1,5 +1,3 @@
-global = this
-
 id = "i2a"
 
 properties = [
@@ -43,6 +41,6 @@ for property in properties
     plugin.methods[property] = getPropertyHandler(property)
 
 plugin.methods.pixel_conversion = (pageAction) ->
-    global.pixel_conversion(pageAction)
+    window.pixel_conversion(pageAction)
 
 ConnecTag.plugins[id] = plugin

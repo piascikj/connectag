@@ -8,10 +8,8 @@ ConnecTag is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 You have received a copy of the GNU Lesser General Public License along with ConnecTag or see http://www.gnu.org/licenses/.
 You are not required to accept this license since you have not signed it.  However, nothing else grants you permission to modify or distribute ConnecTag or its derivative works.  These actions are prohibited by law if you do not accept this license.  Therefore, by modifying or distributing ConnecTag (or any work based on ConnecTag), you indicate your acceptance of this license to do so, and all its terms and conditions for copying, distributing or modifying ConnecTag or works based on it.
 
-Version 0.9.1
+Version 0.9.3
 ###
-
-global = this
 
 has = (object, property) ->
     Object.prototype.hasOwnProperty.call(object, property)
@@ -52,7 +50,7 @@ Identify a plain object (not an html element, window, or a non-object)
 @return {boolean}
 ###
 isPlainObject = (object) ->
-    return false if typeOf(object) isnt "object" or object.nodeType? or object is global
+    return false if typeOf(object) isnt "object" or object.nodeType? or object is window
     return false if object.constructor and has(object, "constructor") and has(object.constructor.prototype, "isPrototypeOf")
 
     for key of object
@@ -147,6 +145,38 @@ buildMatchData = (matchers) ->
                     matchData[key] = matcher[key]
 
     matchData
+
+###*
+Recursivly process matching nested instances
+@param {array} commands Array of command objects
+@param {object} matchData MatchData object from buildMatchData
+@param {object} instance Tag instance
+@return {array}
+###
+buildCommands = (commands, matchData, instance) ->
+    if match(instance.match, matchData)
+        commands = modifyCommands(commands, instance.commands)
+
+        if instance.instances
+            for inst in instance.instances
+                commands = buildCommands(commands, matchData, inst)
+
+    commands
+
+###*
+Alter the given commands array by applying modifier methods and data to it
+@param {array} commands Array of command objects
+@param {object} modifiers Command modifier object
+@return {array}
+###
+modifyCommands = (commands, modifiers) ->
+    return modifiers if isArray(modifiers)
+
+    for own modifier, data in modifiers
+        if ConnecTag.modifiers[modifier]
+            commands = ConnecTag.modifiers[modifier](commands, data)
+
+    commands
 
 ###*
 Execute matchers against matchPatterns and matchData
@@ -253,7 +283,7 @@ ConnecTag =
         # To prevent this behavior, set replaceDocWrite to false when initializing.
         # To replace this with a better document.write stand-in do this before calling initialize: ConnecTag.helpers.documentWrite = yourFunctionHere
         if settings.replaceDocWrite
-            global.document.write = ConnecTag.helpers.documentWrite
+            window.document.write = ConnecTag.helpers.documentWrite
 
         # Load configuration based on data type
         if settings.data
@@ -300,7 +330,10 @@ ConnecTag =
 
             for instance, j in tag.instances
                 instance.id = "T#{i}I#{j}"
-                instances.push(instance) if match(instance.match, matchData)
+
+                if match(instance.match, matchData)
+                    instance.commands = buildCommands(instance.commands, matchData, instance)
+                    instances.push(instance)
 
             tag.instances = instances
             if tag.instances.length
@@ -324,12 +357,12 @@ ConnecTag =
             else if object.href
                 url = object.href
 
-        callback = if url then () -> global.location = url else () ->
+        callback = if url then () -> window.location = url else () ->
 
         return {
             track: () ->
                 ConnecTag.track.apply(ConnecTag, arguments)
-                global.setTimeout(callback, delay)
+                window.setTimeout(callback, delay)
 
                 false
         }
@@ -392,9 +425,9 @@ ConnecTag =
         @param {function} [callback]
         ###
         getScript: (url, callback = () ->) ->
-            body = global.document.getElementsByTagName('body')[0]
+            body = window.document.getElementsByTagName('body')[0]
 
-            script = global.document.createElement('script')
+            script = window.document.createElement('script')
             script.type = "text/javascript"
             script.src = url
 
@@ -421,9 +454,9 @@ ConnecTag =
         getXMLHttpRequest: () ->
             msxmls = ["Msxml2.XMLHTTP.6.0", "Msxml2.XMLHTTP.3.0", "Msxml2.XMLHTTP"]
 
-            if global.XMLHttpRequest
+            if window.XMLHttpRequest
                 xhr = new XMLHttpRequest()
-            else if global.ActiveXObject
+            else if window.ActiveXObject
                 for msxml in msxmls
                     try xhr = new ActiveXObject(msxml)
 
@@ -448,11 +481,11 @@ ConnecTag =
             jsonpUrl = url.replace(/([^\&\?]*=)(\?)/, "$1" + jsonpFn)
 
             if url isnt jsonpUrl
-                global[jsonpFn] = callback
+                window[jsonpFn] = callback
 
                 ConnecTag.helpers.getScript jsonpUrl, () ->
-                    global[jsonpFn] = null
-                    try delete global[jsonpFn]
+                    window[jsonpFn] = null
+                    try delete window[jsonpFn]
             else
                 request = ConnecTag.helpers.getXMLHttpRequest()
                 request.open("GET", url, true)
@@ -468,7 +501,7 @@ ConnecTag =
         @return {object|array}
         ###
         parseJson: (jsonString) ->
-            if global.JSON and global.JSON.parse
+            if window.JSON and window.JSON.parse
                 JSON.parse(jsonString)
             else if !/[^,:{}\[\]0-9.\-+Eaeflnr-u \n\r\t]/.test(jsonString.replace(/"(\\.|[^"\\])*"/g, ''))
                 eval('(' + jsonString + ')')
@@ -484,7 +517,7 @@ ConnecTag =
         getLocationHandler = (property) ->
             (pattern, values) ->
                 pattern = toRegExp(pattern)
-                values ||= global.location[property]
+                values ||= window.location[property]
                 values = if isArray(values) then values else [values]
 
                 for value in values
@@ -533,6 +566,10 @@ ConnecTag =
         matchers
     )()
 
+    ###*
+    Namespace for utility methods
+    @namespace
+    ###
     util:
         typeOf: typeOf
         isArray: isArray
@@ -543,4 +580,4 @@ ConnecTag =
         clone: clone
         toRegExp: toRegExp
 
-global.ConnecTag = ConnecTag
+window.ConnecTag = ConnecTag
