@@ -324,7 +324,7 @@ ConnecTag =
             else if object.href
                 url = object.href
 
-        callback = if url? then () -> global.location = url else () ->
+        callback = if url then () -> global.location = url else () ->
 
         return {
             track: () ->
@@ -488,8 +488,7 @@ ConnecTag =
                 values = if isArray(values) then values else [values]
 
                 for value in values
-                    if pattern.test(value)
-                        return true
+                    return true if pattern.test(value)
 
                 false
 
@@ -505,8 +504,7 @@ ConnecTag =
                 values = if isArray(values) then values else [values]
 
                 for value in values
-                    if pattern.test(value)
-                        return true
+                    return true if pattern.test(value)
 
                 false
 
@@ -522,8 +520,7 @@ ConnecTag =
                 values = if isArray(values) then values else [values]
 
                 for value in values
-                    if pattern.test(value)
-                        return true
+                    return true if pattern.test(value)
 
                 false
 
