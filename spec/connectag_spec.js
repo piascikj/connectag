@@ -78,7 +78,7 @@ describe("ConnecTag.track", function () {
     var plugin1, plugin2, data;
 
     beforeEach(function () {
-        data = {
+        ConnecTag.data = {
             tags: [
                 {
                     plugin: {id: "plugin1", path: ""},
