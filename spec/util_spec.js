@@ -10,60 +10,6 @@ describe("ConnecTag.util", function () {
         "string": ""
     };
 
-    describe("ConnecTag.util.forEach", function () {
-        it("should call the callback for each item with item, index, and array as parameters", function () {
-            var array, callback;
-
-            array = ['hi', 'hey', 'yo'];
-            callback = jasmine.createSpy();
-
-            ConnecTag.util.forEach(array, callback);
-
-            expect(callback.callCount).toEqual(3);
-            expect(callback.argsForCall[0]).toEqual(['hi', 0, array]);
-            expect(callback.argsForCall[1]).toEqual(['hey', 1, array]);
-            expect(callback.argsForCall[2]).toEqual(['yo', 2, array]);
-        });
-    });
-
-    describe("ConnecTag.util.forIn", function () {
-        it("should call the callback with a key and value for each key in the object", function () {
-            var K, k, handler;
-
-            K = function () {
-                this.someProperty = "yes";
-            };
-            K.prototype.someOtherProperty = "yessssss";
-
-            k = new K();
-            handler = jasmine.createSpy();
-
-            ConnecTag.util.forIn(k, handler);
-
-            expect(handler).toHaveBeenCalledWith('someProperty', 'yes');
-            expect(handler).toHaveBeenCalledWith('someOtherProperty', 'yessssss');
-        });
-    });
-
-    describe("ConnecTag.util.forOwnIn", function () {
-        it("should call the callback with a key and value for only the hasOwn properties", function () {
-            var K, k, handler;
-
-            K = function () {
-                this.someProperty = "yes";
-            };
-            K.prototype.someOtherProperty = "yesss";
-
-            k = new K();
-            handler = jasmine.createSpy();
-
-            ConnecTag.util.forOwnIn(k, handler);
-
-            expect(handler).toHaveBeenCalledWith('someProperty', 'yes');
-            expect(handler).not.toHaveBeenCalledWith('someOtherProperty', 'yesss');
-        });
-    });
-
     describe("ConnecTag.util.isArray", function () {
         it("should delegate to Array.isArray if present", function () {
             Array.isArray = Array.isArray || function () {};

@@ -84,7 +84,7 @@ describe("ConnecTag.track", function () {
                     plugin: {id: "plugin"},
                     settings: {},
                     instances: [
-                        {match: {pageId: "1"}, commands: [{method: "a_method", parameters: []}]}
+                        {match: {pageId: "^1$"}, commands: [{method: "a_method", parameters: []}]}
                     ]
                 }
             ]
@@ -95,7 +95,6 @@ describe("ConnecTag.track", function () {
 
     it("should call a plugin's track method if there is a match", function () {
         ConnecTag.values.pageId = "1";
-
         ConnecTag.track('pageId');
 
         // TODO Make this better!!
