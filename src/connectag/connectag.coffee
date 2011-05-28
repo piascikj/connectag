@@ -388,6 +388,44 @@ ConnecTag =
     values: {}
 
     ###*
+    Modifier namespace for functions that modify a commands array
+    @namespace
+    ###
+    modifiers: (() ->
+        xable = (action, commands, data) ->
+            data = if isArray(data) then data else [data]
+
+            for command in commands
+                for id in data
+                    if command.id is id
+                        command.disabled = action is "disable"
+
+            commands
+
+        insert = (position, commands, data) ->
+            offset = if position is "before" then 0 else 1
+
+            for own id, payload of data
+                payload = if isArray(payload) then payload else [payload]
+
+                for command, i in commands
+                    if command.id is id
+                        commands = commands.slice(0, i + offset).concat(payload, commands.slice(i + offset))
+                        break
+
+            commands
+
+        return {
+            disable: (commands, data) -> xable("disable", commands, data)
+            enable:  (commands, data) -> xable("enable", commands, data)
+            before:  (commands, data) -> insert("before", commands, data)
+            after:   (commands, data) -> insert("after", commands, data)
+            append:  (commands, data) -> commands.concat(if isArray(data) then data else [data])
+            prepend: (commands, data) -> (if isArray(data) then data else [data]).concat(commands)
+        }
+    )()
+
+    ###*
     Helpers namespace for helper functions
     The helper functions can be overridden in the snippet if you have a more efficient or better implementation... and you probably do.
     For example, you could replace getScript with a wrapper around jQuery's getScript or replace parseJson with a wrapper around Crockford's JSON.parse.
