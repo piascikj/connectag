@@ -1,14 +1,14 @@
 ###*
-ConnecTag
-Copyright 2010 iCrossing, Inc
-Released under the LGPL license, see COPYING, COPYING.LESSER and LICENSE
-
-ConnecTag is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License or any later version.
-ConnecTag is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTIBILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
-You have received a copy of the GNU Lesser General Public License along with ConnecTag or see http://www.gnu.org/licenses/.
-You are not required to accept this license since you have not signed it.  However, nothing else grants you permission to modify or distribute ConnecTag or its derivative works.  These actions are prohibited by law if you do not accept this license.  Therefore, by modifying or distributing ConnecTag (or any work based on ConnecTag), you indicate your acceptance of this license to do so, and all its terms and conditions for copying, distributing or modifying ConnecTag or works based on it.
-
-Version 0.9.3
+# ConnecTag
+# Copyright 2010 iCrossing, Inc
+# Released under the LGPL license, see COPYING, COPYING.LESSER and LICENSE
+# 
+# ConnecTag is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License or any later version.
+# ConnecTag is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTIBILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+# You have received a copy of the GNU Lesser General Public License along with ConnecTag or see http://www.gnu.org/licenses/.
+# You are not required to accept this license since you have not signed it.  However, nothing else grants you permission to modify or distribute ConnecTag or its derivative works.  These actions are prohibited by law if you do not accept this license.  Therefore, by modifying or distributing ConnecTag (or any work based on ConnecTag), you indicate your acceptance of this license to do so, and all its terms and conditions for copying, distributing or modifying ConnecTag or works based on it.
+# 
+# Version 0.9.3
 ###
 
 has = (object, property) ->
@@ -21,33 +21,33 @@ toString = (object) ->
 # Util
 
 ###*
-Identify an object as safe for recursive cloning
-@param object Object to test
-@return {boolean}
+# Identify an object as safe for recursive cloning
+# @param object Object to test
+# @return {boolean}
 ###
 isCloneable = (object) ->
     isPlainObject(object) || isArray(object)
 
 ###*
-Identify null (using identity comparison)
-@param object Object to test
-@return {boolean}
+# Identify null (using identity comparison)
+# @param object Object to test
+# @return {boolean}
 ###
 isNull = (object) ->
     object is null
 
 ###*
-Identify an array (using toString or native isArray)
-@param object Object to test
-@return {boolean}
+# Identify an array (using toString or native isArray)
+# @param object Object to test
+# @return {boolean}
 ###
 isArray = (object) ->
     if Array.isArray then Array.isArray(object) else (toString(object) is "[object Array]")
 
 ###*
-Identify a plain object (not an html element, window, or a non-object)
-@param object Object to test
-@return {boolean}
+# Identify a plain object (not an html element, window, or a non-object)
+# @param object Object to test
+# @return {boolean}
 ###
 isPlainObject = (object) ->
     return false if typeOf(object) isnt "object" or object.nodeType? or object is window
@@ -59,9 +59,9 @@ isPlainObject = (object) ->
     key is undefined or has(object, key)
 
 ###*
-Native typeof with "corrected" values for array and null
-@param object Object to test
-@return {string}
+# Native typeof with "corrected" values for array and null
+# @param object Object to test
+# @return {string}
 ###
 typeOf = (object) ->
     if isArray(object)
@@ -73,11 +73,11 @@ typeOf = (object) ->
             typeof object
 
 ###*
-Extend an object or array with properties of the others, recursive/clones if deep is true
-@param {boolean} [deep]
-@param {object|array} target
-@param {object|array} source
-@return {object|array}
+# Extend an object or array with properties of the others, recursive/clones if deep is true
+# @param {boolean} [deep]
+# @param {object|array} target
+# @param {object|array} source
+# @return {object|array}
 ###
 extend = (args...) ->
     deep = if typeOf(args[0]) is "boolean" then args.shift() else false
@@ -97,9 +97,9 @@ extend = (args...) ->
     target
 
 ###*
-Recursively clone an object or array
-@param object
-@return {object|array}
+# Recursively clone an object or array
+# @param object
+# @return {object|array}
 ###
 clone = (object) ->
     if isCloneable(object)
@@ -109,9 +109,9 @@ clone = (object) ->
         object
 
 ###*
-Convert a string or array of string|numbers to a RegExp
-@param {array|string|number} patterns
-@return {RegExp}
+# Convert a string or array of string|numbers to a RegExp
+# @param {array|string|number} patterns
+# @return {RegExp}
 ###
 toRegExp = (patterns) ->
     regex = /$.+^/ # Always fail
@@ -125,10 +125,10 @@ toRegExp = (patterns) ->
 # Privates
 
 ###*
-Build a matchData object from specified matchers/matcher data
-@private
-@param {array} matchers
-@return {object}
+# Build a matchData object from specified matchers/matcher data
+# @private
+# @param {array} matchers
+# @return {object}
 ###
 buildMatchData = (matchers) ->
     matchData = {}
@@ -147,11 +147,11 @@ buildMatchData = (matchers) ->
     matchData
 
 ###*
-Recursivly process matching nested instances
-@param {array} commands Array of command objects
-@param {object} matchData MatchData object from buildMatchData
-@param {object} instance Tag instance
-@return {array}
+# Recursivly process matching nested instances
+# @param {array} commands Array of command objects
+# @param {object} matchData MatchData object from buildMatchData
+# @param {object} instance Tag instance
+# @return {array}
 ###
 buildCommands = (commands, matchData, instance) ->
     if match(instance.match, matchData)
@@ -164,10 +164,10 @@ buildCommands = (commands, matchData, instance) ->
     commands
 
 ###*
-Alter the given commands array by applying modifier methods and data to it
-@param {array} commands Array of command objects
-@param {object} modifiers Command modifier object
-@return {array}
+# Alter the given commands array by applying modifier methods and data to it
+# @param {array} commands Array of command objects
+# @param {object} modifiers Command modifier object
+# @return {array}
 ###
 modifyCommands = (commands, modifiers) ->
     return modifiers if isArray(modifiers)
@@ -179,11 +179,11 @@ modifyCommands = (commands, modifiers) ->
     commands
 
 ###*
-Execute matchers against matchPatterns and matchData
-@private
-@param {object} matchPatterns
-@param {object} matchData
-@return {boolean}
+# Execute matchers against matchPatterns and matchData
+# @private
+# @param {object} matchPatterns
+# @param {object} matchData
+# @return {boolean}
 ###
 match = (patterns, data) ->
     for own key of data
@@ -195,9 +195,9 @@ match = (patterns, data) ->
     false
 
 ###*
-Load plugins and execute callback when complete
-@private
-@param {Function} callback
+# Load plugins and execute callback when complete
+# @private
+# @param {Function} callback
 ###
 preloadPlugins = (callback = () ->) ->
     tags = ConnecTag.data.tags
@@ -210,9 +210,9 @@ preloadPlugins = (callback = () ->) ->
         ConnecTag.helpers.getScript(tag.plugin.path, callbackHandler)
 
 ###*
-Plugin class
-Methods are overridden by object passed to constructor
-@constructor
+# Plugin class
+# Methods are overridden by object passed to constructor
+# @constructor
 ###
 class Plugin
     constructor: (object) ->
@@ -224,9 +224,9 @@ class Plugin
         extend(true, @, object)
 
     ###*
-    Execute a command object
-    @param {object} command
-    @param {string} instanceId
+    # Execute a command object
+    # @param {object} command
+    # @param {string} instanceId
     ###
     executeCommand: (command, instanceId) ->
         method = command.method
@@ -243,9 +243,9 @@ class Plugin
         @methods[method].apply(@, parameters)
 
     ###*
-    Iterate over commands array and execute each
-    @param {array} commands
-    @param {string} instanceId
+    # Iterate over commands array and execute each
+    # @param {array} commands
+    # @param {string} instanceId
     ###
     executeCommands: (commands, instanceId) ->
         for command in commands
@@ -255,13 +255,13 @@ class Plugin
 
 ConnecTag =
     ###*
-    @param {object} params
-    @param {string} [params.json] Path to configuration JSON or JSONP
-    @param {string} [params.script] Path to configuration script
-    @param {string} [params.data] Configuration object
-    @param {boolean} [params.preloadPlugins] Preload plugins?
-    @param {boolean} [params.replaceDocWrite] Replace document.write?
-    @param {function} [params.callback] Callback function executed when initialize is complete
+    # @param {object} params
+    # @param {string} [params.json] Path to configuration JSON or JSONP
+    # @param {string} [params.script] Path to configuration script
+    # @param {string} [params.data] Configuration object
+    # @param {boolean} [params.preloadPlugins] Preload plugins?
+    # @param {boolean} [params.replaceDocWrite] Replace document.write?
+    # @param {function} [params.callback] Callback function executed when initialize is complete
     ###
     initialize: (params) ->
         settings = extend({
@@ -301,16 +301,16 @@ ConnecTag =
         return
 
     ###*
-    Call initialize and then call track all when complete
-    @param {object} params Params is passed to initialize (with the exception of callback)
+    # Call initialize and then call track all when complete
+    # @param {object} params Params is passed to initialize (with the exception of callback)
     ###
     connect: (params = {}) ->
         params.callback = ConnecTag.track
         ConnecTag.initialize(params)
 
     ###*
-    Track against specified matchers
-    @param {string|object} Any number of these
+    # Track against specified matchers
+    # @param {string|object} Any number of these
     ###
     track: (args...) ->
         instances = []
@@ -343,10 +343,10 @@ ConnecTag =
                     getPluginHandler(tag)()
 
     ###*
-    Set up a callback/timeout for exit links
-    @param {string|object} object
-    @param {number} delay
-    @return {object}
+    # Set up a callback/timeout for exit links
+    # @param {string|object} object
+    # @param {number} delay
+    # @return {object}
     ###
     exit: (object, delay = 500) ->
         if object
@@ -370,26 +370,26 @@ ConnecTag =
     Plugin: Plugin
 
     ###*
-    Configuration data
-    @type {object}
+    # Configuration data
+    # @type {object}
     ###
     data: {}
 
     ###*
-    Object to store vendor plugins
-    @type {object}
+    # Object to store vendor plugins
+    # @type {object}
     ###
     plugins: {}
 
     ###*
-    Object to store dynamic variables set on the page
-    @type {object}
+    # Object to store dynamic variables set on the page
+    # @type {object}
     ###
     values: {}
 
     ###*
-    Modifier namespace for functions that modify a commands array
-    @namespace
+    # Modifier namespace for functions that modify a commands array
+    # @namespace
     ###
     modifiers: (() ->
         xable = (action, commands, data) ->
@@ -426,16 +426,16 @@ ConnecTag =
     )()
 
     ###*
-    Helpers namespace for helper functions
-    The helper functions can be overridden in the snippet if you have a more efficient or better implementation... and you probably do.
-    For example, you could replace getScript with a wrapper around jQuery's getScript or replace parseJson with a wrapper around Crockford's JSON.parse.
-    @namespace
+    # Helpers namespace for helper functions
+    # The helper functions can be overridden in the snippet if you have a more efficient or better implementation... and you probably do.
+    # For example, you could replace getScript with a wrapper around jQuery's getScript or replace parseJson with a wrapper around Crockford's JSON.parse.
+    # @namespace
     ###
     helpers:
         ###*
-        Parse a string template
-        @param {string} template
-        @param {object} context
+        # Parse a string template
+        # @param {string} template
+        # @param {object} context
         ###
         parseTemplate: (template, context) ->
             pattern = '\\$\\{[^\\}]+\\}'
@@ -458,9 +458,9 @@ ConnecTag =
             template
 
         ###*
-        Load a script
-        @param {string} url
-        @param {function} [callback]
+        # Load a script
+        # @param {string} url
+        # @param {function} [callback]
         ###
         getScript: (url, callback = () ->) ->
             body = window.document.getElementsByTagName('body')[0]
@@ -486,8 +486,8 @@ ConnecTag =
                     return
 
         ###*
-        Get an instance of XMLHttpRequest or ActiveXObject
-        @return {XMLHttpRequest|ActiveXObject}
+        # Get an instance of XMLHttpRequest or ActiveXObject
+        # @return {XMLHttpRequest|ActiveXObject}
         ###
         getXMLHttpRequest: () ->
             msxmls = ["Msxml2.XMLHTTP.6.0", "Msxml2.XMLHTTP.3.0", "Msxml2.XMLHTTP"]
@@ -501,18 +501,18 @@ ConnecTag =
             xhr
 
         ###*
-        document.write replacement
-        If you would like to preserve document.write functionality override this helper with document.write
-        before calling ConnecTag.initialize/connect. We replace document.write because we're changing the
-        conditions under which vendor tags are loading and there's a possibility that they may call
-        document.write.
+        # document.write replacement
+        # If you would like to preserve document.write functionality override this helper with document.write
+        # before calling ConnecTag.initialize/connect. We replace document.write because we're changing the
+        # conditions under which vendor tags are loading and there's a possibility that they may call
+        # document.write.
         ###
         documentWrite: () -> # Intentionally blank
 
         ###*
-        Load JSON
-        @param {string} url
-        @param {function} callback
+        # Load JSON
+        # @param {string} url
+        # @param {function} callback
         ###
         getJson: (url, callback = () ->) ->
             jsonpFn = "jsonp_#{new Date().getTime()}"
@@ -534,9 +534,9 @@ ConnecTag =
                 request.send(null)
 
         ###*
-        Parse a json string to an object
-        @param {string} jsonString
-        @return {object|array}
+        # Parse a json string to an object
+        # @param {string} jsonString
+        # @return {object|array}
         ###
         parseJson: (jsonString) ->
             if window.JSON and window.JSON.parse
@@ -547,8 +547,8 @@ ConnecTag =
                 throw new SyntaxError('JSON syntax error')
 
     ###*
-    Matchers namespace for functions that check whether a tag instance or transformer executes
-    @namespace
+    # Matchers namespace for functions that check whether a tag instance or transformer executes
+    # @namespace
     ###
     matchers: (() ->
         locations = ['hash', 'host', 'hostname', 'href', 'pathname', 'search', 'protocol', 'port']
@@ -565,10 +565,10 @@ ConnecTag =
 
         matchers =
             ###*
-            Match against an event or array of event
-            @param {string} pattern
-            @param {string|array} values
-            @return {boolean}
+            # Match against an event or array of event
+            # @param {string} pattern
+            # @param {string|array} values
+            # @return {boolean}
             ###
             event: (pattern, values) ->
                 pattern = toRegExp(pattern)
@@ -580,10 +580,10 @@ ConnecTag =
                 false
 
             ###*
-            Match against a pageId
-            @param {string} pattern
-            @param {string|array} values
-            @return {boolean}
+            # Match against a pageId
+            # @param {string} pattern
+            # @param {string|array} values
+            # @return {boolean}
             ###
             pageId: (pattern, values) ->
                 pattern = toRegExp(pattern)
@@ -605,8 +605,8 @@ ConnecTag =
     )()
 
     ###*
-    Namespace for utility methods
-    @namespace
+    # Namespace for utility methods
+    # @namespace
     ###
     util:
         typeOf: typeOf
