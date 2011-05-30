@@ -26,7 +26,7 @@ toString = (object) ->
 # @return {boolean}
 ###
 isCloneable = (object) ->
-    isPlainObject(object) || isArray(object)
+    isPlainObject(object) or isArray(object)
 
 ###*
 # Identify null (using identity comparison)
@@ -50,6 +50,8 @@ isArray = (object) ->
 # @return {boolean}
 ###
 isPlainObject = (object) ->
+    #* Thanks, jQuery!
+    #* This does not check for window objects from other frames
     return false if typeOf(object) isnt "object" or object.nodeType? or object is window
     return false if object.constructor and has(object, "constructor") and has(object.constructor.prototype, "isPrototypeOf")
 
