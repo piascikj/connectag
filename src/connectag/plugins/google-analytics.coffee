@@ -79,9 +79,6 @@ plugin = new ConnecTag.Plugin {
                 parameters: [settings.account]
             }, instance.id
 
-            if settings.autoCommands and settings.autoCommands.length
-                @executeCommands(settings.autoCommands, instance.id)
-
             @executeCommands(instance.commands, instance.id)
 
         @initialize(settings) if not @initialized
