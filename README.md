@@ -52,7 +52,7 @@ A basic on-page implementation of ConnecTag might look like this:
 
 _Place ConnecTag just before the close of the body tag._
 
-```javascript
+```html
 <script type="text/javascript" src="/path/to/your/connectag.js"></script>
 <script type="text/javascript">
       ConnecTag.connect({ json: "/path/to/your/configuration.json" });
