@@ -53,10 +53,10 @@ A basic on-page implementation of ConnecTag might look like this:
 _Place ConnecTag just before the close of the body tag._
 
 ```javascript
-      <script type="text/javascript" src="/path/to/your/connectag.js"></script>
-      <script type="text/javascript">
-            ConnecTag.connect({ json: "/path/to/your/configuration.json" });
-      </script>
+<script type="text/javascript" src="/path/to/your/connectag.js"></script>
+<script type="text/javascript">
+      ConnecTag.connect({ json: "/path/to/your/configuration.json" });
+</script>
 ```
 
 The code snippet above will load ConnecTag and your ConnecTag configuration file. Then ConnecTag will inject and execute the vendor tags according to the rules specified in your configuration.
