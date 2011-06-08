@@ -71,7 +71,11 @@ describe "ConnecTag.track", ->
                 }
             ]
 
-        ConnecTag.plugins["plugin"] = plugin = new ConnecTag.Plugin({id: "plugin", track: jasmine.createSpy()})
+        plugin = new ConnecTag.classes.Plugin()
+        plugin.id = "plugin"
+        plugin.track = jasmine.createSpy()
+
+        ConnecTag.plugins["plugin"] = plugin
         plugin
 
     it "should call a plugin's track method if there is a match", ->

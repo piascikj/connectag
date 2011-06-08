@@ -8,7 +8,7 @@
 # You have received a copy of the GNU Lesser General Public License along with ConnecTag or see http://www.gnu.org/licenses/.
 # You are not required to accept this license since you have not signed it.  However, nothing else grants you permission to modify or distribute ConnecTag or its derivative works.  These actions are prohibited by law if you do not accept this license.  Therefore, by modifying or distributing ConnecTag (or any work based on ConnecTag), you indicate your acceptance of this license to do so, and all its terms and conditions for copying, distributing or modifying ConnecTag or works based on it.
 # 
-# Version 0.9.3
+# Version 0.9.4
 ###
 
 has = (object, property) ->
@@ -319,17 +319,22 @@ ConnecTag =
         matchData = buildMatchData(args)
         getPluginHandler = (tag) ->
             () ->
-                plugin = ConnecTag.plugins[tag.plugin.id]
+                id = tag.plugin.id
 
-                if plugin
-                    plugin.track(tag.settings, tag.instances)
-                else
-                    setTimeout(getPluginHandler(tag), 500)
+                if ConnecTag.plugins[id]? or ConnecTag.classes.plugins[id]?
+                    plugin = ConnecTag.plugins[id] or new ConnecTag.classes.plugins[id]
 
+                    if plugin
+                        plugin.track(tag.settings, tag.instances)
+                    else
+                        setTimeout(getPluginHandler(tag), 500)
+
+        # For each vendor tag
         for tag, i in ConnecTag.data.tags
-            tag = clone(tag)
+            tag = clone(tag) # Clone it to preserve the original
             instances = []
 
+            # Id the instance and apply nested instances/modifiers if matched
             for instance, j in tag.instances
                 instance.id = "T#{i}I#{j}"
 
@@ -337,12 +342,15 @@ ConnecTag =
                     instance.commands = buildCommands(instance.commands, matchData, instance)
                     instances.push(instance)
 
+            # Put the modified matching instances on the tag clone
             tag.instances = instances
+
+            # Call plugin's track method OR try to load plugin and set callback
             if tag.instances.length
-                if not ConnecTag.plugins[tag.plugin.id]?
-                    ConnecTag.helpers.getScript(tag.plugin.path, getPluginHandler(tag))
-                else
+                if ConnecTag.plugins[tag.plugin.id]?
                     getPluginHandler(tag)()
+                else
+                    ConnecTag.helpers.getScript(tag.plugin.path, getPluginHandler(tag))
 
     ###*
     # Set up a callback/timeout for exit links
@@ -369,8 +377,6 @@ ConnecTag =
                 false
         }
 
-    Plugin: Plugin
-
     ###*
     # Configuration data
     # @type {object}
@@ -378,10 +384,18 @@ ConnecTag =
     data: {}
 
     ###*
-    # Object to store vendor plugins
+    # Object to store vendor plugin instances
     # @type {object}
     ###
     plugins: {}
+
+    ###*
+    # Object to store ConnecTag classes
+    # @type {object}
+    ###
+    classes:
+        Plugin: Plugin
+        plugins: {}
 
     ###*
     # Object to store dynamic variables set on the page

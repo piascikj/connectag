@@ -15,8 +15,10 @@
                     },
                     "settings": {"optional": true, "type": "object"},
                     "instances": {
+                        "id": "instances",
                         "type": "array",
                         "items": {
+                            "instances": {"ref": "instances"},
                             "match": {
                                 "id": "match",
                                 "type": {
@@ -37,18 +39,33 @@
                                 }
                             },
                             "commands": {
-                                "type": "array",
-                                "items": {
-                                    "id": "command",
-                                    "type": "object",
-                                    "properties": {
-                                        "id":         {"type": ["string", "number"]},
-                                        "method":     {"type": "string"},
-                                        "paramaters": {"type": "array"},
-                                        "enabled":    {"optional": true, "type": "boolean"}
+                                "type": [
+                                    {
+                                        "type": "array",
+                                        "items": {
+                                            "id": "command",
+                                            "type": "object",
+                                            "properties": {
+                                                "id":         {"optional": true, "type": ["string", "number"]},
+                                                "method":     {"type": "string"},
+                                                "paramaters": {"type": "array"},
+                                                "enabled":    {"optional": true, "type": "boolean"}
+                                            },
+                                            "additionalProperties": false
+                                        }
                                     },
-                                    "additionalProperties": false
-                                }
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "before":  {"optional": true},
+                                            "after":   {"optional": true},
+                                            "disable": {"optional": true},
+                                            "enable":  {"optional": true},
+                                            "append":  {"optional": true},
+                                            "prepend": {"optional": true}
+                                        }
+                                    }
+                                ]
                             }
                         }
                     }
