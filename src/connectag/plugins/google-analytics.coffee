@@ -13,7 +13,9 @@ class GoogleAnalytics extends ConnecTag.classes.Plugin
         window._gaq = window._gaq || []
 
         for instance in instances
-            @executeCommand({method: "_setAccount", parameters: [settings.account]}, instance.id) if settings.account?
+            if settings.account?
+                @executeCommand({id: "settings_account", method: "_setAccount", parameters: [settings.account]}, instance.id)
+
             @executeCommands(instance.commands, instance.id)
 
         @initialize(settings) if not @initialized
@@ -81,6 +83,7 @@ class GoogleAnalytics extends ConnecTag.classes.Plugin
 
                 window._gaq.push(args)
 
+        methods = {}
         for name in names
             methods[name] = getMethodHandler(name)
 

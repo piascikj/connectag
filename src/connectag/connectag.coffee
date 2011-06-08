@@ -174,7 +174,7 @@ buildCommands = (commands, matchData, instance) ->
 modifyCommands = (commands, modifiers) ->
     return modifiers if isArray(modifiers)
 
-    for own modifier, data in modifiers
+    for own modifier, data of modifiers
         if ConnecTag.modifiers[modifier]
             commands = ConnecTag.modifiers[modifier](commands, data)
 
@@ -210,50 +210,6 @@ preloadPlugins = (callback = () ->) ->
 
     for tag in tags
         ConnecTag.helpers.getScript(tag.plugin.path, callbackHandler)
-
-###*
-# Plugin class
-# Methods are overridden by object passed to constructor
-# @constructor
-###
-class Plugin
-    constructor: (object) ->
-        @initialized = false
-        @initialize = () ->
-        @methods = {}
-        @track = (settings, tag) ->
-
-        extend(true, @, object)
-
-    ###*
-    # Execute a command object
-    # @param {object} command
-    # @param {string} instanceId
-    ###
-    executeCommand: (command, instanceId) ->
-        method = command.method
-        parameters = command.parameters
-
-        parameters.push(instanceId) if instanceId?
-
-        for param in parameters
-            if typeOf(param) is "string" and param.method?
-                param = @executeCommand(param, instanceId)
-            else if typeOf(param) is "string"
-                param = ConnecTag.helpers.parseTemplate(param, ConnecTag.values)
-
-        @methods[method].apply(@, parameters)
-
-    ###*
-    # Iterate over commands array and execute each
-    # @param {array} commands
-    # @param {string} instanceId
-    ###
-    executeCommands: (commands, instanceId) ->
-        for command in commands
-            @executeCommand(command, instanceId)
-
-        return
 
 ConnecTag =
     ###*
@@ -332,6 +288,7 @@ ConnecTag =
         # For each vendor tag
         for tag, i in ConnecTag.data.tags
             tag = clone(tag) # Clone it to preserve the original
+            tag.settings ?= {}
             instances = []
 
             # Id the instance and apply nested instances/modifiers if matched
@@ -394,7 +351,6 @@ ConnecTag =
     # @type {object}
     ###
     classes:
-        Plugin: Plugin
         plugins: {}
 
     ###*
@@ -633,5 +589,51 @@ ConnecTag =
         extend: extend
         clone: clone
         toRegExp: toRegExp
+
+###*
+# Plugin class
+# @constructor
+###
+ConnecTag.classes.Plugin = class Plugin
+    constructor: (params) ->
+        @initialized = false
+        @methods = {}
+
+        @initialize = () ->
+        @track = (settings, tag) ->
+
+    ###*
+    # Execute a command object
+    # @param {object} command
+    # @param {string} instanceId
+    ###
+    executeCommand: (command, instanceId) ->
+        return "" if command.disabled
+
+        method = command.method
+        parameters = command.parameters
+
+        parameters.push(instanceId) if instanceId?
+
+        for param in parameters
+            if typeOf(param) is "string" and param.method?
+                param = @executeCommand(param, instanceId)
+            else if typeOf(param) is "string"
+                param = ConnecTag.helpers.parseTemplate(param, ConnecTag.values)
+
+        @methods[method].apply(@, parameters)
+
+    ###*
+    # Iterate over commands array and execute each
+    # @param {array} commands
+    # @param {string} instanceId
+    ###
+    executeCommands: (commands, instanceId) ->
+        for command in commands
+            @executeCommand(command, instanceId)
+
+        return
+
+    helpers: ConnecTag.helpers
 
 window.ConnecTag = ConnecTag
