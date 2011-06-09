@@ -615,11 +615,12 @@ ConnecTag.classes.Plugin = class Plugin
 
         parameters.push(instanceId) if instanceId?
 
-        for param in parameters
-            if typeOf(param) is "string" and param.method?
-                param = @executeCommand(param, instanceId)
-            else if typeOf(param) is "string"
-                param = ConnecTag.helpers.parseTemplate(param, ConnecTag.values)
+        for param, i in parameters
+            if param isnt instanceId
+                if typeOf(param) is "object" and param.method?
+                    parameters[i] = @executeCommand(param, instanceId)
+                else if typeOf(param) is "string"
+                    parameters[i] = ConnecTag.helpers.parseTemplate(param, ConnecTag.values)
 
         @methods[method].apply(@, parameters)
 
