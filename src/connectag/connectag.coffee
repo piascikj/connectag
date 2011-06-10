@@ -304,7 +304,7 @@ ConnecTag =
 
             # Call plugin's track method OR try to load plugin and set callback
             if tag.instances.length
-                if ConnecTag.plugins[tag.plugin.id]?
+                if ConnecTag.plugins[tag.plugin.id]? or ConnecTag.classes.plugins[tag.plugin.id]?
                     getPluginHandler(tag)()
                 else
                     ConnecTag.helpers.getScript(tag.plugin.path, getPluginHandler(tag))
