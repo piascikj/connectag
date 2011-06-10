@@ -197,6 +197,15 @@ match = (patterns, data) ->
     false
 
 ###*
+# Check if plugin has been loaded
+# @private
+# @param {String} id
+# @return {Boolean}
+###
+pluginLoaded = (id) ->
+    (ConnecTag.plugins[id]? or ConnecTag.classes.plugins[id]?)
+
+###*
 # Load plugins and execute callback when complete
 # @private
 # @param {Function} callback
@@ -209,7 +218,10 @@ preloadPlugins = (callback = () ->) ->
         callback() if --count is 0
 
     for tag in tags
-        ConnecTag.helpers.getScript(tag.plugin.path, callbackHandler)
+        if pluginLoaded(tag.plugin.id)
+            callbackHandler()
+        else
+            ConnecTag.helpers.getScript(tag.plugin.path, callbackHandler)
 
 ConnecTag =
     ###*
@@ -277,13 +289,15 @@ ConnecTag =
             () ->
                 id = tag.plugin.id
 
-                if ConnecTag.plugins[id]? or ConnecTag.classes.plugins[id]?
-                    plugin = ConnecTag.plugins[id] or new ConnecTag.classes.plugins[id]
+                if ConnecTag.plugins[id]?
+                    plugin = ConnecTag.plugins[id]
+                else if ConnecTag.classes.plugins[id]?
+                    plugin = ConnecTag.plugins[id] = new ConnecTag.classes.plugins[id]()
 
-                    if plugin
-                        plugin.track(tag.settings, tag.instances)
-                    else
-                        setTimeout(getPluginHandler(tag), 500)
+                if plugin
+                    plugin.track(tag.settings, tag.instances)
+                else
+                    setTimeout(getPluginHandler(tag), 500)
 
         # For each vendor tag
         for tag, i in ConnecTag.data.tags
@@ -304,7 +318,8 @@ ConnecTag =
 
             # Call plugin's track method OR try to load plugin and set callback
             if tag.instances.length
-                if ConnecTag.plugins[tag.plugin.id]? or ConnecTag.classes.plugins[tag.plugin.id]?
+                if pluginLoaded(tag.plugin.id)
+                    console.log("plugin loaded")
                     getPluginHandler(tag)()
                 else
                     ConnecTag.helpers.getScript(tag.plugin.path, getPluginHandler(tag))
