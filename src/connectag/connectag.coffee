@@ -293,6 +293,8 @@ ConnecTag =
                     plugin = ConnecTag.plugins[id]
                 else if ConnecTag.classes.plugins[id]?
                     plugin = ConnecTag.plugins[id] = new ConnecTag.classes.plugins[id]()
+                else
+                    return
 
                 if plugin
                     plugin.track(tag.settings, tag.instances)
