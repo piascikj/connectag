@@ -128,7 +128,6 @@
         return handler();
       });
       ConnecTag.initialize({
-        preloadPlugins: false,
         script: url,
         callback: callback
       });
@@ -136,16 +135,13 @@
       return expect(callback).toHaveBeenCalled();
     });
     it("should override document.write by default", function() {
-      ConnecTag.initialize({
-        preloadPlugins: false
-      });
+      ConnecTag.initialize();
       return expect(document.write).toBe(ConnecTag.helpers.documentWrite);
     });
     it("should not override document.write when replaceDocWrite is false", function() {
       var docWrite;
       docWrite = document.write;
       ConnecTag.initialize({
-        preloadPlugins: false,
         replaceDocWrite: false
       });
       return expect(document.write).toBe(docWrite);
@@ -154,8 +150,7 @@
       var data, params;
       data = {};
       params = {
-        json: "/some/path/to.json",
-        preloadPlugins: false
+        json: "/some/path/to.json"
       };
       spyOn(ConnecTag.helpers, "parseJson").andCallFake(function(responseText) {
         return data;
@@ -186,7 +181,6 @@
       };
       params = {
         json: "/path/to/some.json",
-        preloadPlugins: false,
         callback: function() {}
       };
       spyOn(params, 'callback');
@@ -201,7 +195,6 @@
     it("should load script and execute callback if given script path", function() {
       var params;
       params = {
-        preloadPlugins: false,
         script: "/path/to/script.js",
         callback: function() {}
       };
@@ -213,10 +206,9 @@
       expect(ConnecTag.helpers.getScript).toHaveBeenCalled();
       return expect(params.callback).toHaveBeenCalled();
     });
-    return it("should preload plugins if preload is true and fire the callback after they are done", function() {
+    return it("should load plugins and fire the callback after they are done", function() {
       var params;
       params = {
-        preloadPlugins: true,
         data: {
           tags: [
             {
@@ -253,8 +245,7 @@
       params = {
         data: {
           tags: []
-        },
-        preloadPlugins: false
+        }
       };
       spyOn(ConnecTag, 'initialize').andCallThrough();
       spyOn(ConnecTag, 'track');
@@ -312,7 +303,6 @@
       spyOn(ConnecTag.plugins.plugin2, 'track');
       ConnecTag.initialize({
         data: ConnecTag.util.clone(data),
-        preloadPlugins: false,
         callback: function() {
           return ConnecTag.track({
             pageId: '100'
@@ -329,7 +319,6 @@
       spyOn(ConnecTag.matchers, 'protocol');
       ConnecTag.initialize({
         data: ConnecTag.util.clone(data),
-        preloadPlugins: false,
         callback: function() {
           ConnecTag.data.tags.pop();
           return ConnecTag.track('hash', {

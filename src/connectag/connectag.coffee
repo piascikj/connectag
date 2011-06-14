@@ -210,7 +210,7 @@ pluginLoaded = (id) ->
 # @private
 # @param {Function} callback
 ###
-preloadPlugins = (callback = () ->) ->
+loadPlugins = (callback = () ->) ->
     tags = ConnecTag.data.tags
     count = tags.length
 
@@ -229,7 +229,6 @@ ConnecTag =
     # @param {string} [params.json] Path to configuration JSON or JSONP
     # @param {string} [params.script] Path to configuration script
     # @param {string} [params.data] Configuration object
-    # @param {boolean} [params.preloadPlugins] Preload plugins?
     # @param {boolean} [params.replaceDocWrite] Replace document.write?
     # @param {function} [params.callback] Callback function executed when initialize is complete
     ###
@@ -238,14 +237,13 @@ ConnecTag =
             data: null
             script: null
             json: null
-            preloadPlugins: true
             replaceDocWrite: true
             callback: () ->
         }, params)
 
-        if settings.preloadPlugins
-            callback = settings.callback
-            settings.callback = () -> preloadPlugins(callback)
+        callback = settings.callback
+        settings.callback = () ->
+            setTimeout(() -> loadPlugins(callback), 1)
 
         # Replace document.write in case any of the vendor code was expecting to be added DURING load
         # ConnecTag should be the last script loaded just before the close of the body tag.

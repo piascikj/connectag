@@ -105,7 +105,6 @@ describe "ConnecTag.initialize", ->
             handler()
 
         ConnecTag.initialize {
-            preloadPlugins: false
             script: url
             callback: callback
         }
@@ -114,14 +113,13 @@ describe "ConnecTag.initialize", ->
         expect(callback).toHaveBeenCalled()
 
     it "should override document.write by default", ->
-        ConnecTag.initialize({preloadPlugins: false})
+        ConnecTag.initialize()
         expect(document.write).toBe(ConnecTag.helpers.documentWrite)
 
     it "should not override document.write when replaceDocWrite is false", ->
         docWrite = document.write
 
         ConnecTag.initialize {
-            preloadPlugins: false
             replaceDocWrite: false
         }
 
@@ -131,7 +129,6 @@ describe "ConnecTag.initialize", ->
         data = {}
         params =
             json: "/some/path/to.json"
-            preloadPlugins: false
 
         # Ignoring responseText for purposes of this test and return data from above
         spyOn(ConnecTag.helpers, "parseJson").andCallFake (responseText) ->
@@ -155,7 +152,6 @@ describe "ConnecTag.initialize", ->
         data = {tags: []}
         params =
             json: "/path/to/some.json"
-            preloadPlugins: false
             callback: ->
 
         spyOn(params, 'callback')
@@ -170,7 +166,6 @@ describe "ConnecTag.initialize", ->
 
     it "should load script and execute callback if given script path", ->
         params =
-            preloadPlugins: false
             script: "/path/to/script.js"
             callback: ->
 
@@ -183,9 +178,8 @@ describe "ConnecTag.initialize", ->
         expect(ConnecTag.helpers.getScript).toHaveBeenCalled()
         expect(params.callback).toHaveBeenCalled()
 
-    it "should preload plugins if preload is true and fire the callback after they are done", ->
+    it "should load plugins and fire the callback after they are done", ->
         params =
-            preloadPlugins: true
             data: {
                 tags: [
                     {plugin: {path: "/plugins/plugin1.js"}}
@@ -212,7 +206,6 @@ describe "ConnecTag.connect", ->
         params =
             data:
                 tags: []
-            preloadPlugins: false
 
         spyOn(ConnecTag, 'initialize').andCallThrough()
         spyOn(ConnecTag, 'track')
@@ -248,7 +241,6 @@ describe "ConnecTag.track", ->
 
         ConnecTag.initialize {
             data: ConnecTag.util.clone(data)
-            preloadPlugins: false
             callback: ->
                 ConnecTag.track({pageId: '100'})
         }
@@ -264,7 +256,6 @@ describe "ConnecTag.track", ->
 
         ConnecTag.initialize {
             data: ConnecTag.util.clone(data),
-            preloadPlugins: false,
             callback: ->
                 ConnecTag.data.tags.pop()
                 ConnecTag.track('hash', {pageId: '1000'}, 'protocol')
