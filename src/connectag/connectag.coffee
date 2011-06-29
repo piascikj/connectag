@@ -233,17 +233,13 @@ ConnecTag =
     # @param {function} [params.callback] Callback function executed when initialize is complete
     ###
     initialize: (params) ->
-        settings = extend({
+        settings = extend {
             data: null
             script: null
             json: null
             replaceDocWrite: true
             callback: () ->
-        }, params)
-
-        callback = settings.callback
-        settings.callback = () ->
-            setTimeout(() -> loadPlugins(callback), 1)
+        }, params
 
         # Replace document.write in case any of the vendor code was expecting to be added DURING load
         # ConnecTag should be the last script loaded just before the close of the body tag.
@@ -252,6 +248,10 @@ ConnecTag =
         # To replace this with a better document.write stand-in do this before calling initialize: ConnecTag.helpers.documentWrite = yourFunctionHere
         if settings.replaceDocWrite
             window.document.write = ConnecTag.helpers.documentWrite
+
+        callback = settings.callback
+        settings.callback = () ->
+            loadPlugins(callback)
 
         # Load configuration based on data type
         if settings.data
@@ -319,7 +319,6 @@ ConnecTag =
             # Call plugin's track method OR try to load plugin and set callback
             if tag.instances.length
                 if pluginLoaded(tag.plugin.id)
-                    console.log("plugin loaded")
                     getPluginHandler(tag)()
                 else
                     ConnecTag.helpers.getScript(tag.plugin.path, getPluginHandler(tag))
